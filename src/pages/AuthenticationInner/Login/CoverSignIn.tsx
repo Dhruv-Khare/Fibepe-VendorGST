@@ -55,6 +55,7 @@ const CoverSignIn = (props: any) => {
   const [mobileNumber, setMobileNumber] = useState("");
   const [showOtpField, setShowOtpField] = useState(false);
   const [err, setError] = useState("");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   // --- START: CHANGE 1 ---
   // This useEffect hook runs when the component mounts.
@@ -130,6 +131,7 @@ const CoverSignIn = (props: any) => {
   }, [dispatch, errorMsg]);
 
   const handleSendOTP = async () => {
+    setIsButtonDisabled(true); // Disable the button immediately
     try {
       if (
         !mobileNumber ||
@@ -162,10 +164,14 @@ const CoverSignIn = (props: any) => {
     } catch (err) {
       console.error("Error sending OTP:", err);
       setError("Error sending OTP. Please try again.");
+    } finally {
+      setIsButtonDisabled(false); // Re-enable the button in case of an error
     }
   };
 
   const handleVerifyOTP = async () => {
+    setIsButtonDisabled(true); // Disable the button immediately
+
     try {
       const response: any = await axios.post(
         "https://adminmanagement.fibepe.com/api/User/Admin/VerifyOTP",
@@ -217,6 +223,8 @@ const CoverSignIn = (props: any) => {
       console.error("Error verifying OTP:", err);
       setError("Error verifying OTP. Please try again.");
     } finally {
+      setIsButtonDisabled(false); // Re-enable the button in case of an error
+
       setLoader(false);
     }
   };
@@ -284,6 +292,7 @@ const CoverSignIn = (props: any) => {
                               <Button
                                 type="button"
                                 onClick={handleSendOTP}
+                                disabled={isButtonDisabled}
                                 className="btn btn-success w-100 mt-2"
                               >
                                 {showOtpField ? "Resend OTP" : "Send OTP"}
@@ -322,6 +331,7 @@ const CoverSignIn = (props: any) => {
                                 <Button
                                   onClick={handleVerifyOTP}
                                   className="btn btn-success w-100 mt-2"
+                                  disabled={isButtonDisabled}
                                 >
                                   Submit OTP
                                 </Button>

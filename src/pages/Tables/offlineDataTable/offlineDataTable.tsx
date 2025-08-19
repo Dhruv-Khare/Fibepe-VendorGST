@@ -145,7 +145,8 @@ const CustomerModal: FC<{
   const [opRefId, setOpRefId] = useState("");
   // --- 1. ADD NEW STATE FOR QR CODE LOADING ---
   const [isQrLoading, setIsQrLoading] = useState(true);
-
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isRefunding, setIsRefunding] = useState(false);
   useEffect(() => {
     if (isOpen) {
       setConfNumber("");
@@ -157,30 +158,34 @@ const CustomerModal: FC<{
 
   if (!isOpen) return null;
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsUpdating(true); // Update बटन को निष्क्रिय करें
     const updateData: UpdatePayload = {
       recordId: customer?.id,
       fibepeId: customer?.rechargeUserId,
       confNumber: confNumber,
       opRefId: opRefId, // NameDescription has been removed
     };
-    onSave(updateData);
+    await onSave(updateData);
+    setIsUpdating(false); // अपडेट के बाद बटन को पुनः सक्रिय करें
   };
 
   // CORRECTED: This now uses serviceNumber for the payload.
-  const handleRefund = () => {
+  const handleRefund = async () => {
     if (!customer?.serviceNumber || !customer?.rechargeUserId) {
       console.error(
         "Cannot process refund: Missing service number or fibepe ID."
       );
       return;
     }
+    setIsRefunding(true); // Refund बटन को निष्क्रिय करें
     const refundData: RefundPayload = {
       serviceNumber: customer.serviceNumber, // Using the correct field
       fibepeId: customer.rechargeUserId,
     };
-    onRefund(refundData);
+    await onRefund(refundData);
+    setIsRefunding(false); // रिफंड के बाद बटन को पुनः सक्रिय करें
   };
 
   const qrCodeUrl = customer?.phone
@@ -229,6 +234,7 @@ const CustomerModal: FC<{
                 <button
                   type="button"
                   onClick={handleRefund}
+                  disabled={isRefunding} // सही स्थिति का उपयोग करें
                   className="btn btn-sm"
                   style={{
                     fontSize: "13px",
@@ -239,7 +245,7 @@ const CustomerModal: FC<{
                     borderRadius: "4px",
                   }}
                 >
-                  Refund
+                  {isRefunding ? "Refund..." : "Refund"}
                 </button>
                 <button
                   type="button"
@@ -422,6 +428,7 @@ const CustomerModal: FC<{
                 <button
                   type="submit"
                   className="btn"
+                  disabled={isUpdating} // सही स्थिति का उपयोग करें
                   style={{
                     fontSize: "13px",
                     padding: "8px 24px",
@@ -432,7 +439,7 @@ const CustomerModal: FC<{
                     width: "100%",
                   }}
                 >
-                  Update
+                  {isUpdating ? "Updating..." : "Update"}
                 </button>
               </div>
             </form>
