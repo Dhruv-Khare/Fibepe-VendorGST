@@ -6,21 +6,28 @@ import NonAuthLayout from "../Layouts/NonAuthLayout";
 import VerticalLayout from "../Layouts/index";
 
 // Dashboard
-import DashboardEcommerce from "../pages/DashboardEcommerce/index";
+import DashboardJobs from "../pages/DashboardJob/index";
 
 // Authentication Pages
 import Logout from "../pages/Authentication/Logout";
 import CoverSignIn from "../pages/AuthenticationInner/Login/CoverSignIn";
-import BasicTables from "pages/Tables/offlineDataTable/OfflineTable";
-
+// import BasicTables from "pages/Tables/BasicTables/BasicTables";
+// import UpdateSubscriber from "../pages/updateSubscriber/index";
+import VendorList from "../pages/VendorList/SelectVendor/index"; // <-- 1. IMPORT THE NEW PAGE
+import VendorData from "../pages/VendorList/VendorData/index";
 // Route Protectors
 import AuthProtected from "./AuthProtected";
 import PublicRoute from "./PublicRoutes"; // <-- 1. IMPORT THE NEW COMPONENT
+import RechargeDetails from "pages/VendorList/RechargeDetails/index";
 
 // Routes
 const authProtectedRoutes = [
-  { path: "/dashboard", component: <DashboardEcommerce /> },
-  { path: "/tables-offileData", component: <BasicTables /> },
+  { path: "/dashboard", component: <DashboardJobs /> },
+  // { path: "/tables-basic", component: <BasicTables /> },
+  // { path: "/update-subscriber", component: <UpdateSubscriber /> },
+  { path: "/vendor-list", component: <VendorList /> }, // <-- 2. ADD THE NEW ROUTE
+  { path: "/vendor-data", component: <VendorData /> },
+  {path: "/recharge-Details", component: <RechargeDetails /> }
 ];
 
 const publicRoutes = [{ path: "/login", component: <CoverSignIn /> }];

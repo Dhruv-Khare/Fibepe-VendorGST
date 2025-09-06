@@ -1285,7 +1285,7 @@ const Navdata = () => {
     // },
     // {
     //   id: "tables",
-    //   label: "Subscriber Details",
+    //   label: "Subscriber Fetch",
     //   icon: "ri-layout-grid-line",
     //   link: "/tables-basic",
     //   click: function (e: any) {
@@ -1295,27 +1295,53 @@ const Navdata = () => {
     //     updateIconSidebar(e);
     //   },
     //   stateVariables: isTables,
-    //   subItems: [
-    //     {
-    //       id: "basictables",
-    //       label: "Basic Tables",
-    //       link: "/tables-basic",
-    //       parentId: "tables",
-    //     },
-    //     // { id: "listjs", label: "List Js", link: "/tables-listjs", parentId: "tables" },
-    //     // {
-    //     //   id: "reactdatatables",
-    //     //   label: "React Datatables",
-    //     //   link: "/tables-react",
-    //     //   parentId: "tables",
-    //     // },
-    //   ],
+    //   //   subItems: [
+    //   //     {
+    //   //       id: "basictables",
+    //   //       label: "Basic Tables",
+    //   //       link: "/tables-basic",
+    //   //       parentId: "tables",
+    //   //     },
+    //   //     // { id: "listjs", label: "List Js", link: "/tables-listjs", parentId: "tables" },
+    //   //     // {
+    //   //     //   id: "reactdatatables",
+    //   //     //   label: "React Datatables",
+    //   //     //   link: "/tables-react",
+    //   //     //   parentId: "tables",
+    //   //     // },
+    //   //   ],
+    // },
+    // {
+    //   id: "tables-offline",
+    //   label: "Update Subscriber",
+    //   icon: "ri-layout-grid-line",
+    //   link: "/update-subscriber",
+    //   click: function (e: any) {
+    //     e.preventDefault();
+    //     setIsTables(!isTables);
+    //     setIscurrentState("Tables");
+    //     updateIconSidebar(e);
+    //   },
+    //   stateVariables: isTables,
     // },
     {
       id: "tables-offline",
-      label: "Offline Data",
+      label: "Vendor-Data",
       icon: "ri-layout-grid-line",
-      link: "/tables-offileData",
+      link: "/select-vendor",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsTables(!isTables);
+        setIscurrentState("Tables");
+        updateIconSidebar(e);
+      },
+      stateVariables: isTables,
+    },
+    {
+      id: "tables-offline",
+      label: "Recharge Details",
+      icon: "ri-layout-grid-line",
+      link: "/recharge-details",
       click: function (e: any) {
         e.preventDefault();
         setIsTables(!isTables);
@@ -1325,207 +1351,17 @@ const Navdata = () => {
       stateVariables: isTables,
     },
     // {
-    //   id: "charts",
-    //   label: "Charts",
-    //   icon: "ri-pie-chart-line",
-    //   link: "/#",
+    //   id: "tables-offline",
+    //   label: "Vendor Data",
+    //   icon: "ri-layout-grid-line",
+    //   link: "/vendor-data",
     //   click: function (e: any) {
     //     e.preventDefault();
-    //     setIsCharts(!isCharts);
-    //     setIscurrentState("Charts");
+    //     setIsTables(!isTables);
+    //     setIscurrentState("Tables");
     //     updateIconSidebar(e);
     //   },
-    //   stateVariables: isCharts,
-    //   subItems: [
-    //     {
-    //       id: "apexcharts",
-    //       label: "Apexcharts",
-    //       link: "/#",
-    //       parentId: "charts",
-    //       isChildItem: true,
-    //       click: function (e: any) {
-    //         e.preventDefault();
-    //         setIsApex(!isApex);
-    //       },
-    //       stateVariables: isApex,
-    //       childItems: [
-    //         { id: 1, label: "Line", link: "/charts-apex-line" },
-    //         { id: 2, label: "Area", link: "/charts-apex-area" },
-    //         { id: 3, label: "Column", link: "/charts-apex-column" },
-    //         { id: 4, label: "Bar", link: "/charts-apex-bar" },
-    //         { id: 5, label: "Mixed", link: "/charts-apex-mixed" },
-    //         { id: 6, label: "Timeline", link: "/charts-apex-timeline" },
-    //         {
-    //           id: 7,
-    //           label: "Range Area",
-    //           link: "/charts-apex-range-area",
-    //           parentId: "apexcharts",
-    //           badgeColor: "success",
-    //           badgeName: "New",
-    //         },
-    //         {
-    //           id: 8,
-    //           label: "Funnel",
-    //           link: "/charts-apex-funnel",
-    //           parentId: "apexcharts",
-    //           badgeColor: "success",
-    //           badgeName: "New",
-    //         },
-    //         { id: 9, label: "Candlstick", link: "/charts-apex-candlestick" },
-    //         { id: 10, label: "Boxplot", link: "/charts-apex-boxplot" },
-    //         { id: 11, label: "Bubble", link: "/charts-apex-bubble" },
-    //         { id: 12, label: "Scatter", link: "/charts-apex-scatter" },
-    //         { id: 13, label: "Heatmap", link: "/charts-apex-heatmap" },
-    //         { id: 14, label: "Treemap", link: "/charts-apex-treemap" },
-    //         { id: 15, label: "Pie", link: "/charts-apex-pie" },
-    //         { id: 16, label: "Radialbar", link: "/charts-apex-radialbar" },
-    //         { id: 17, label: "Radar", link: "/charts-apex-radar" },
-    //         { id: 18, label: "Polar Area", link: "/charts-apex-polar" },
-    //         {
-    //           id: 19,
-    //           label: "Slope",
-    //           link: "/charts-apex-slope",
-    //           parentId: "charts",
-    //           badgeColor: "success",
-    //           badgeName: "New",
-    //         },
-    //       ],
-    //     },
-    //     {
-    //       id: "chartjs",
-    //       label: "Chartjs",
-    //       link: "/charts-chartjs",
-    //       parentId: "charts",
-    //     },
-    //     {
-    //       id: "echarts",
-    //       label: "Echarts",
-    //       link: "/charts-echarts",
-    //       parentId: "charts",
-    //     },
-    //   ],
-    // },
-    // {
-    //   id: "icons",
-    //   label: "Icons",
-    //   icon: "ri-compasses-2-line",
-    //   link: "/#",
-    //   click: function (e: any) {
-    //     e.preventDefault();
-    //     setIsIcons(!isIcons);
-    //     setIscurrentState("Icons");
-    //     updateIconSidebar(e);
-    //   },
-    //   stateVariables: isIcons,
-    //   subItems: [
-    //     {
-    //       id: "remix",
-    //       label: "Remix",
-    //       link: "/icons-remix",
-    //       parentId: "icons",
-    //     },
-    //     {
-    //       id: "boxicons",
-    //       label: "Boxicons",
-    //       link: "/icons-boxicons",
-    //       parentId: "icons",
-    //     },
-    //     {
-    //       id: "materialdesign",
-    //       label: "Material Design",
-    //       link: "/icons-materialdesign",
-    //       parentId: "icons",
-    //     },
-    //     {
-    //       id: "lineawesome",
-    //       label: "Line Awesome",
-    //       link: "/icons-lineawesome",
-    //       parentId: "icons",
-    //     },
-    //     {
-    //       id: "feather",
-    //       label: "Feather",
-    //       link: "/icons-feather",
-    //       parentId: "icons",
-    //     },
-    //     {
-    //       id: "crypto",
-    //       label: "Crypto SVG",
-    //       link: "/icons-crypto",
-    //       parentId: "icons",
-    //     },
-    //   ],
-    // },
-    // {
-    //   id: "maps",
-    //   label: "Maps",
-    //   icon: "ri-map-pin-line",
-    //   link: "/#",
-    //   click: function (e: any) {
-    //     e.preventDefault();
-    //     setIsMaps(!isMaps);
-    //     setIscurrentState("Maps");
-    //     updateIconSidebar(e);
-    //   },
-    //   stateVariables: isMaps,
-    //   subItems: [
-    //     {
-    //       id: "google",
-    //       label: "Google",
-    //       link: "/maps-google",
-    //       parentId: "maps",
-    //     },
-    //   ],
-    // },
-    // {
-    //   id: "multilevel",
-    //   label: "Multi Level",
-    //   icon: "ri-share-line",
-    //   link: "/#",
-    //   click: function (e: any) {
-    //     e.preventDefault();
-    //     setIsMultiLevel(!isMultiLevel);
-    //     setIscurrentState("MuliLevel");
-    //     updateIconSidebar(e);
-    //   },
-    //   stateVariables: isMultiLevel,
-    //   subItems: [
-    //     {
-    //       id: "level1.1",
-    //       label: "Level 1.1",
-    //       link: "/#",
-    //       parentId: "multilevel",
-    //     },
-    //     {
-    //       id: "level1.2",
-    //       label: "Level 1.2",
-    //       link: "/#",
-    //       isChildItem: true,
-    //       click: function (e: any) {
-    //         e.preventDefault();
-    //         setIsLevel1(!isLevel1);
-    //       },
-    //       stateVariables: isLevel1,
-    //       childItems: [
-    //         { id: 1, label: "Level 2.1", link: "/#" },
-    //         {
-    //           id: "level2.2",
-    //           label: "Level 2.2",
-    //           link: "/#",
-    //           isChildItem: true,
-    //           click: function (e: any) {
-    //             e.preventDefault();
-    //             setIsLevel2(!isLevel2);
-    //           },
-    //           stateVariables: isLevel2,
-    //           childItems: [
-    //             { id: 1, label: "Level 3.1", link: "/#" },
-    //             { id: 2, label: "Level 3.2", link: "/#" },
-    //           ],
-    //         },
-    //       ],
-    //     },
-    //   ],
+    //   stateVariables: isTables,
     // },
   ];
   return <React.Fragment>{menuItems}</React.Fragment>;
