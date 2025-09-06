@@ -29,6 +29,7 @@ import "./pages/VendorList/RechargeDetails/index"
 // Fake Backend (if you are using it)
 import fakeBackend from "./helpers/AuthType/fakeBackend";
 import RechargeDetailTable from "pages/VendorList/RechargeDetails/index";
+import UtilityDetailTable from "pages/VendorList/UtilityDetails/index";
 fakeBackend();
 
 function App() {
@@ -128,6 +129,16 @@ function App() {
             <AuthProtected>
               <VerticalLayout>
                 <RechargeDetailTable />
+              </VerticalLayout>
+            </AuthProtected>
+          }
+        />
+        <Route
+          path="/utility-Details"
+          element={
+            <AuthProtected>
+              <VerticalLayout>
+                <UtilityDetailTable />
               </VerticalLayout>
             </AuthProtected>
           }

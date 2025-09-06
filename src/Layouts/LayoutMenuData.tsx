@@ -1350,6 +1350,19 @@ const Navdata = () => {
       },
       stateVariables: isTables,
     },
+       {
+      id: "tables-offline",
+      label: "Utility Details",
+      icon: "ri-layout-grid-line",
+      link: "/utility-details",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsTables(!isTables);
+        setIscurrentState("Tables");
+        updateIconSidebar(e);
+      },
+      stateVariables: isTables,
+    },
     // {
     //   id: "tables-offline",
     //   label: "Vendor Data",
