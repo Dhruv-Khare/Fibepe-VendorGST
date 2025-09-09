@@ -34,7 +34,7 @@ import UtilityDetailTable from "./utilityDetails";
 // } from "./BasicTablesCode";
 
 const UpdateSubscriber = () => {
-  document.title = "Fibepe-Admin";
+  document.title = "Fibepe-Utility-Details";
   return (
     <React.Fragment>
       <UiContent />

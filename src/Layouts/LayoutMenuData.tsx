@@ -1340,7 +1340,7 @@ const Navdata = () => {
     {
       id: "tables-offline",
       label: "Recharge Details",
-      icon: "ri-layout-grid-line",
+      icon: "ri-apps-2-line",
       link: "/recharge-details",
       click: function (e: any) {
         e.preventDefault();
@@ -1353,7 +1353,7 @@ const Navdata = () => {
        {
       id: "tables-offline",
       label: "Utility Details",
-      icon: "ri-layout-grid-line",
+      icon: "ri-pages-line",
       link: "/utility-details",
       click: function (e: any) {
         e.preventDefault();

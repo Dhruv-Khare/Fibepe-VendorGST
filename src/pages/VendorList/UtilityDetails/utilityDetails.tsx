@@ -4,6 +4,11 @@ import React, { useState, useMemo, FC, useCallback, useEffect } from "react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
+
+// --- NEW: Import the ProviderHeader and its type ---
+import ProviderHeader, { ProviderSummary } from "./ProviderHeader"; 
+// Note: Adjust the path "./ProviderHeader" if the file is in a different directory.
+
 // --- TYPE DEFINITIONS ---
 type RechargeRecord = {
   LedgerId: number;
@@ -32,8 +37,11 @@ interface TableHeader {
 
 // --- CONFIGURATION ---
 const ITEMS_PER_PAGE = 10;
-const RechargeAPI_URL =
+const UtilityAPI_URL =
   "https://vendorgst.fibepe.com/api/User/Vendor/GetUtilityDetail";
+
+  
+const UtilityMonthlyAPI_URL ="https://vendorgst.fibepe.com/api/User/Vendor/GetUtilityMonthlyDetail";
 
 // --- REUSABLE BUTTON COMPONENT ---
 const Button: FC<{
@@ -67,6 +75,11 @@ const UtilityDetailTable: FC = () => {
     }
     return defaultValue;
   };
+  // --- STATE MANAGEMENT ---
+    // --- NEW: State for report type selection ---
+    const [reportType, setReportType] = useState<"date" | "month">(() =>
+      getInitialState("recharge_reportType", "date")
+    );
  // --- STATE MANAGEMENT ---
   // MODIFIED: All state now initializes from sessionStorage
   const [records, setRecords] = useState<RechargeRecord[]>(() => getInitialState('utility_records', []));
@@ -83,7 +96,7 @@ const UtilityDetailTable: FC = () => {
   const [day, setDay] = useState<number>(() => getInitialState('utility_day', new Date().getDate()));
   
   // --- USEEFFECT HOOKS TO SAVE STATE TO SESSIONSTORAGE ---
-  useEffect(() => { sessionStorage.setItem('utility_records', JSON.stringify(records)); }, [records]);
+  // useEffect(() => { sessionStorage.setItem('utility_records', JSON.stringify(records)); }, [records]);
   useEffect(() => { sessionStorage.setItem('utility_sortConfig', JSON.stringify(sortConfig)); }, [sortConfig]);
   useEffect(() => { sessionStorage.setItem('utility_currentPage', JSON.stringify(currentPage)); }, [currentPage]);
   useEffect(() => { sessionStorage.setItem('utility_hasSearched', JSON.stringify(hasSearched)); }, [hasSearched]);
@@ -91,17 +104,72 @@ const UtilityDetailTable: FC = () => {
   useEffect(() => { sessionStorage.setItem('utility_month', JSON.stringify(month)); }, [month]);
   useEffect(() => { sessionStorage.setItem('utility_day', JSON.stringify(day)); }, [day]);
 
+  useEffect(() => {
+      // Check if a search was previously run in this session
+      const previouslySearched = getInitialState("utility_hasSearched", false);
+  
+      // If it was, automatically fetch the data using the restored state
+      if (previouslySearched) {
+        fetchRechargeData();
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+  // --- NEW: Calculate category summary data from records ---
+  const categorySummary = useMemo<ProviderSummary[]>(() => {
+    if (records.length === 0) {
+      return [];
+    }
+    // Use a Map to aggregate data for each unique category
+    const summaryMap = new Map<string, Omit<ProviderSummary, "providerName">>();
+    for (const record of records) {
+      const categoryName = record.CategoryName || "Unknown";
+      // Initialize the category if it's not in the map yet
+      if (!summaryMap.has(categoryName)) {
+        summaryMap.set(categoryName, {
+          successAmount: 0,
+          failedAmount: 0,
+          totalAmount: 0,
+        });
+      }
+      const current = summaryMap.get(categoryName)!;
+      // Add to total amount
+      current.totalAmount += record.Amount;
+      // Add to success or failed amount based on status
+      const status = record.FinalStatus.toLowerCase();
+      if (status === "success") {
+        current.successAmount += record.Amount;
+      } else if (status === "failed") {
+        current.failedAmount += record.Amount;
+      }
+    }
+    // Convert map to array, mapping `categoryName` to the `providerName` prop
+    // that the ProviderHeader component expects.
+    return Array.from(summaryMap.entries()).map(([name, amounts]) => ({
+      providerName: name, // This is the key mapping
+      ...amounts,
+    }));
+  }, [records]);
+
 
   // --- DATA FETCHING ---
   const fetchRechargeData = useCallback(async () => {
-    setIsLoading(true);
+   setIsLoading(true);
     setError(null);
-     // ✅ 1. FORMAT MONTH AND DAY WITH A LEADING ZERO
+
     const formattedMonth = String(month).padStart(2, "0");
-    const formattedDay = String(day).padStart(2, "0");
+
+    // Determine the API URL and parameters based on the selected report type
+    let apiUrl = "";
+    if (reportType === "month") {
+      apiUrl = `${UtilityMonthlyAPI_URL}?month=${formattedMonth}&year=${year}`;
+    } else {
+      const formattedDay = String(day).padStart(2, "0");
+      apiUrl = `${UtilityAPI_URL}?date=${formattedDay}&month=${formattedMonth}&year=${year}`;
+    }
     
     try {
-      const response = await fetch(`${RechargeAPI_URL}?date=${formattedDay}&month=${formattedMonth}&year=${year}`, {
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           Accept: "*/*",
@@ -125,7 +193,7 @@ const UtilityDetailTable: FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [day, month, year]);
+  }, [day, month, year,reportType]);
 
   // --- MEMOIZED COMPUTATIONS ---
   const filteredRecords = useMemo(() => {
@@ -150,15 +218,15 @@ const UtilityDetailTable: FC = () => {
 
   const totalPages = Math.ceil(filteredRecords.length / ITEMS_PER_PAGE);
 
-  const totalAmount = useMemo(() => {
-    if (!hasSearched) return 0;
-    return records.reduce((sum, record) => {
-      if (record.FinalStatus.toLowerCase() === "success") {
-        return sum + record.Amount;
-      }
-      return sum;
-    }, 0);
-  }, [records, hasSearched]);
+  // const totalAmount = useMemo(() => {
+  //   if (!hasSearched) return 0;
+  //   return records.reduce((sum, record) => {
+  //     if (record.FinalStatus.toLowerCase() === "success") {
+  //       return sum + record.Amount;
+  //     }
+  //     return sum;
+  //   }, 0);
+  // }, [records, hasSearched]);
 
   // --- EVENT HANDLERS ---
   const handleSort = (key: keyof RechargeRecord) => {
@@ -230,48 +298,110 @@ const UtilityDetailTable: FC = () => {
   return (
     <div className="card-body">
       <div className="p-3 mb-3 border rounded">
+        {/* --- MODIFIED: Form layout adjusted for the new dropdown --- */}
         <div className="row g-3 align-items-end">
-            <div className="col-md-3">
-            <label htmlFor="day-select" className="form-label">Day</label>
-            {/* CHANGED: onChange now marks the form as dirty */}
-            <select id="day-select" className="form-select" value={day} onChange={(e) => {
-                setDay(Number(e.target.value));
+          <div className="col-md-3">
+            <label htmlFor="report-type-select" className="form-label">
+              Report Type
+            </label>
+            <select
+              id="report-type-select"
+              className="form-select"
+              value={reportType}
+              onChange={(e) => {
+                setReportType(e.target.value as "date" | "month");
                 setIsFormDirty(true);
-            }}>
-              {dayOptions.map(d => <option key={d} value={d}>{d}</option>)}
+              }}
+            >
+              <option value="date">Date Wise</option>
+              <option value="month">Month Wise</option>
             </select>
           </div>
+
+          {/* --- MODIFIED: Day dropdown is now conditional --- */}
+          {reportType === "date" && (
+            <div className="col-md-2">
+              <label htmlFor="day-select" className="form-label">
+                Day
+              </label>
+              <select
+                id="day-select"
+                className="form-select"
+                value={day}
+                onChange={(e) => {
+                  setDay(Number(e.target.value));
+                  setIsFormDirty(true);
+                }}
+              >
+                {dayOptions.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div className="col-md-3">
-            <label htmlFor="month-select" className="form-label">Month</label>
-            {/* CHANGED: onChange now marks the form as dirty */}
-            <select id="month-select" className="form-select" value={month} onChange={(e) => {
+            <label htmlFor="month-select" className="form-label">
+              Month
+            </label>
+            <select
+              id="month-select"
+              className="form-select"
+              value={month}
+              onChange={(e) => {
                 setMonth(Number(e.target.value));
                 setIsFormDirty(true);
-            }}>
-              {monthOptions.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+              }}
+            >
+              {monthOptions.map((m) => (
+                <option key={m.value} value={m.value}>
+                  {m.label}
+                </option>
+              ))}
             </select>
           </div>
-          <div className="col-md-3">
-            <label htmlFor="year-select" className="form-label">Year</label>
-            {/* CHANGED: onChange now marks the form as dirty */}
-            <select id="year-select" className="form-select" value={year} onChange={(e) => {
+
+          <div className="col-md-2">
+            <label htmlFor="year-select" className="form-label">
+              Year
+            </label>
+            <select
+              id="year-select"
+              className="form-select"
+              value={year}
+              onChange={(e) => {
                 setYear(Number(e.target.value));
                 setIsFormDirty(true);
-            }}>
-              {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
+              }}
+            >
+              {yearOptions.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
             </select>
           </div>
-          
-          
-          <div className="col-md-3">
-             {/* CHANGED: The disabled logic is updated */}
-             <Button color="primary" onClick={handleFetchClick} disabled={isLoading || !isFormDirty}>
-                {isLoading ? "Fetching..." : "Fetch Data"}
+          <div className="col-md-2">
+            <Button
+              color="primary"
+              onClick={handleFetchClick}
+              disabled={isLoading || !isFormDirty}
+            >
+              {isLoading ? "Fetching..." : "Fetch Data"}
             </Button>
           </div>
         </div>
       </div>
-      
+
+
+      {/* --- NEW: Render the Header component here --- */}
+      {(hasSearched || isLoading) && !error && (
+        <div className="mb-4">
+          <ProviderHeader data={categorySummary} isLoading={isLoading} />
+        </div>
+      )}
       {error && (
         <div className="alert alert-danger">
           <strong>Error:</strong> {error}
@@ -284,7 +414,7 @@ const UtilityDetailTable: FC = () => {
             <div className="col-sm">
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <div className="d-flex align-items-center">
-                  <h5 style={{ fontWeight: "bold" }}>
+                  {/* <h5 style={{ fontWeight: "bold" }}>
                     Total Amount:{" "}
                     <span className="text-success fw-bold">
                       {totalAmount.toLocaleString("en-IN", {
@@ -292,7 +422,7 @@ const UtilityDetailTable: FC = () => {
                         currency: "INR",
                       })}
                     </span>
-                  </h5>
+                  </h5> */}
                 </div>
                 {/* NEW: Wrapper for the export button and search bar */}
                 <div className="d-flex align-items-center gap-2">

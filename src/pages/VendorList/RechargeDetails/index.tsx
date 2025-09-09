@@ -34,7 +34,7 @@ import RechargeDetails from "./RechargeDetails";
 // } from "./BasicTablesCode";
 
 const UpdateSubscriber = () => {
-  document.title = "Fibepe-Admin";
+  document.title = "Fibepe-Prepaid-Details";
   return (
     <React.Fragment>
       <UiContent />
