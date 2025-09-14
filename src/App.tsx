@@ -17,19 +17,18 @@ import { setAuthorization } from "./helpers/api_helper"; // Adjust the import pa
 //import components
 import CoverSignIn from "./pages/AuthenticationInner/Login/CoverSignIn";
 import DashboardJobs from "./pages/DashboardJob/index";
-// import BasicTables from "./pages/Tables/BasicTables/BasicTables";
 import AuthProtected from "./Routes/AuthProtected";
 import PublicRoute from "./Routes/PublicRoutes";
 import VerticalLayout from "../src/Layouts/index";
-// import UpdateSubscriber from "./pages/updateSubscriber/index";
 import SelectVendor from "./pages/VendorList/SelectVendor/index";
 import VendorData from "./pages/VendorList/VendorData/index";
-import "./pages/VendorList/RechargeDetails/index"
 
 // Fake Backend (if you are using it)
 import fakeBackend from "./helpers/AuthType/fakeBackend";
 import RechargeDetailTable from "pages/VendorList/RechargeDetails/index";
 import UtilityDetailTable from "pages/VendorList/UtilityDetails/index";
+
+import TransactionRecovery from "pages/VendorList/transactionrecovery/index";
 fakeBackend();
 
 function App() {
@@ -143,7 +142,16 @@ function App() {
             </AuthProtected>
           }
         />
-
+  <Route
+          path="/recover-transaction-amt"
+          element={
+            <AuthProtected>
+              <VerticalLayout>
+                <TransactionRecovery />
+              </VerticalLayout>
+            </AuthProtected>
+          }
+        />
         {/* Catch-all route - ALSO WRAPPED WITH PublicRoute */}
         <Route
           path="*"

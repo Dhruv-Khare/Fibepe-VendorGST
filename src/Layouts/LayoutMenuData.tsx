@@ -1363,6 +1363,19 @@ const Navdata = () => {
       },
       stateVariables: isTables,
     },
+       {
+      id: "tables-offline",
+      label: "Transaction Recovery",
+      icon: "ri-stack-line",
+      link: "/recover-transaction-amt",
+      click: function (e: any) {
+        e.preventDefault();
+        setIsTables(!isTables);
+        setIscurrentState("Tables");
+        updateIconSidebar(e);
+      },
+      stateVariables: isTables,
+    },
     // {
     //   id: "tables-offline",
     //   label: "Vendor Data",
