@@ -29,6 +29,9 @@ import RechargeDetailTable from "pages/VendorList/RechargeDetails/index";
 import UtilityDetailTable from "pages/VendorList/UtilityDetails/index";
 
 import TransactionRecovery from "pages/VendorList/transactionrecovery/index";
+import SuperRefundProcess from "pages/VendorList/SuperRefundProcess/index";
+import RefundDetailsTable from "pages/VendorList/GetRefundDetails/index";
+import Initiatefund from "pages/VendorList/FundInitiate/index";
 fakeBackend();
 
 function App() {
@@ -148,6 +151,36 @@ function App() {
             <AuthProtected>
               <VerticalLayout>
                 <TransactionRecovery />
+              </VerticalLayout>
+            </AuthProtected>
+          }
+        />
+         <Route
+          path="/process-superRefund"
+          element={
+            <AuthProtected>
+              <VerticalLayout>
+                <SuperRefundProcess />
+              </VerticalLayout>
+            </AuthProtected>
+          }
+        />
+         <Route
+          path="/refund-details"
+          element={
+            <AuthProtected>
+              <VerticalLayout>
+                <RefundDetailsTable />
+              </VerticalLayout>
+            </AuthProtected>
+          }
+        />
+         <Route
+          path="/initiate-fund"
+          element={
+            <AuthProtected>
+              <VerticalLayout>
+                <Initiatefund />
               </VerticalLayout>
             </AuthProtected>
           }

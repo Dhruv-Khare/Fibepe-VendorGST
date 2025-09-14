@@ -1,7 +1,6 @@
 import React, { useState, FC } from "react";
 import {
-  Card,
-  CardBody,
+ 
   Form,
   FormGroup,
   Label,
@@ -135,8 +134,7 @@ const TransactionRecovery = () => {
 
   return (
     <>
-      <Card>
-        <CardBody>
+      
           <Form onSubmit={(e) => { e.preventDefault(); handleRecoverTransaction(); }}>
             <Row className="align-items-end">
               <Col md={6}>
@@ -164,8 +162,7 @@ const TransactionRecovery = () => {
               </Col>
             </Row>
           </Form>
-        </CardBody>
-      </Card>
+      
       
       {/* Success Modal */}
       <SuccessModal
